@@ -1,0 +1,26 @@
+services:
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: gateway.Dockerfile
+    container_name: gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./gateway:/app
+      - /app/node_modules
+    command: npm run dev
+
+  postgres:
+    image: postgres:latest
+    container_name: postgreDB
+    restart: always
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
