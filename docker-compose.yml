@@ -17,6 +17,9 @@ services:
     restart: always
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
+      # - POSTGRES_USER=meda
+      # - POSTGRES_PASSWORD=meda
+      - POSTGRES_DB=hmDB
     ports:
       - "5432:5432"
     volumes:
