@@ -3,11 +3,12 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 
 service HealthData{
-  rpc CreateHealthRecord(HealthRecordRequest) returns (google.protobuf.Empty);
+  rpc CreateHealthRecord(stream HealthRecordRequest) returns (google.protobuf.Empty);
   rpc GetHealthRecord(HealthRecordIdRequest) returns (HealthRecord);
   rpc GetAllHealthRecords(google.protobuf.Empty) returns (stream HealthRecord);
   rpc UpdateHealthRecord(HealthRecord) returns (Message);
   rpc DeleteHealthRecord(HealthRecordIdRequest) returns (Message);
+  rpc GetAthleteHealthRecords(AthleteFilter) returns (stream HealthRecord);
 }
 
 message HealthRecordRequest {
@@ -43,14 +44,19 @@ message HealthRecordIdRequest{
   int32 recordId = 1;
 }
 
+message Message {
+  int32 recordId = 1;
+  string message = 2;
+}
+
+message AthleteFilter {
+  string athleteId = 1;
+  ActivityStatus activityStatus = 2;
+}
+
 enum ActivityStatus {
   Walking = 0;
   Cycling = 1;
   Running = 2;
   Resting = 3;
-}
-
-message Message {
-  int32 recordId = 1;
-  string message = 2;
 }
