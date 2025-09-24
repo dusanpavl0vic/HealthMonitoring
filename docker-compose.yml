@@ -1,4 +1,19 @@
 services:
+  datamanager:
+    platform: linux/amd64
+    build:
+      context: ./datamanager
+      dockerfile: dataManager.Dockerfile
+    container_name: dataManager
+    ports:
+      - "5266:5266"
+      - "7216:7216"
+    environment:
+      - ASPNETCORE_URLS=http://+:5266
+      - DOTNET_RUNNING_IN_CONTAINER=true
+    depends_on:
+      - postgres
+
   gateway:
     build:
       context: ./gateway
@@ -10,6 +25,8 @@ services:
       - ./gateway:/app
       - /app/node_modules
     command: npm run dev
+    depends_on:
+      - datamanager
 
   postgres:
     image: postgres:latest

@@ -28,7 +28,12 @@ async function sendCsvRows() {
           //TODO: Otkomentarisi slanje prema gateway-u
           //const response = await axios.post(url, row);
           //console.log(`Poslato: ${row.Record_ID}, status: ${response.status}`);
-          console.log(`Poslato: ${JSON.stringify(row, null, 2)}`);
+          const [firstKey, ...restKeys] = Object.keys(row);
+          const rowWithoutFirst = {};
+          for (const key of restKeys) {
+            rowWithoutFirst[key] = row[key];
+          }
+          console.log(`Poslato: ${JSON.stringify(rowWithoutFirst, null, 2)}`);
         } catch (error) {
           console.error(
             `Greška pri slanju reda ${row.Record_ID}:`,
