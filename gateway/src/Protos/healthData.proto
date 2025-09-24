@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package Gateway.Grpc;
+
+service HealthData{
+  rpc CreateHealthRecord(stream HealthRecordRequest) returns (google.protobuf.Empty);
+  rpc GetHealthRecord(HealthRecordIdRequest) returns (HealthRecord);
+  rpc GetAllHealthRecords(google.protobuf.Empty) returns (stream HealthRecord);
+  rpc UpdateHealthRecord(HealthRecord) returns (Message);
+  rpc DeleteHealthRecord(HealthRecordIdRequest) returns (Message);
+  rpc GetAthleteHealthRecords(AthleteFilter) returns (stream HealthRecord);
+}
+
+message HealthRecordRequest {
+  string athleteId = 1;
+  string timestamp = 2;
+  int32 heartRate = 3;
+  float bodyTemperature = 4;
+  string bloodPressure = 5;
+  int32 bloodOxygen = 6;
+  int32 stepCount = 7;
+  ActivityStatus activityStatus = 8;
+  double latitude = 9;
+  double longitude = 10;
+  int32 secureTransmissionStatus = 11;
+}
+
+message HealthRecord {
+  int32 recordId = 1;
+  string athleteId = 2;
+  string timestamp = 3;
+  int32 heartRate = 4;
+  float bodyTemperature = 5;
+  string bloodPressure = 6;
+  int32 bloodOxygen = 7;
+  int32 stepCount = 8;
+  ActivityStatus activityStatus = 9;
+  double latitude = 10;
+  double longitude = 11;
+  int32 secureTransmissionStatus = 12;
+}
+
+message HealthRecordIdRequest{
+  int32 recordId = 1;
+}
+
+message Message {
+  int32 recordId = 1;
+  string message = 2;
+}
+
+message AthleteFilter {
+  string athleteId = 1;
+  ActivityStatus activityStatus = 2;
+}
+
+enum ActivityStatus {
+  Walking = 0;
+  Cycling = 1;
+  Running = 2;
+  Resting = 3;
+}
