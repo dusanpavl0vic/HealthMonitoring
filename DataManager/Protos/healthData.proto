@@ -2,6 +2,9 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 
+option csharp_namespace = "DataManager.Grpc";
+
+
 service HealthData{
   rpc CreateHealthRecord(stream HealthRecordRequest) returns (google.protobuf.Empty);
   rpc GetHealthRecord(HealthRecordIdRequest) returns (HealthRecord);

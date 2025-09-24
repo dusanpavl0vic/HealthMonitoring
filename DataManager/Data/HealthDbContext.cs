@@ -1,8 +1,10 @@
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataManager.Data;
 
-class HealthRecordDbContext : DbContext
+public class HealthRecordDbContext : DbContext
 {
     public HealthRecordDbContext(DbContextOptions<HealthRecordDbContext> options) : base(options)
     {
@@ -10,17 +12,42 @@ class HealthRecordDbContext : DbContext
 
     public DbSet<HealthRecord> HealthRecords { get; set; }
 
-    public async Task CreateHealthRecordAsync(HealthRecord record)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        await HealthRecords.AddAsync(record);
+        modelBuilder.Entity<HealthRecord>()
+            .HasKey(r => r.RecordId);
+
+        modelBuilder.Entity<HealthRecord>()
+            .Property(r => r.RecordId)
+            .ValueGeneratedOnAdd();
+    }
+    public async Task CreateHealthRecordAsync(HealthRecordRequest record)
+    {
+        var entity = new HealthRecord
+        {
+            AthleteId = record.AthleteId,
+            Timestamp = record.Timestamp,
+            HeartRate = record.HeartRate,
+            BodyTemperature = record.BodyTemperature,
+            BloodPressure = record.BloodPressure,
+            BloodOxygen = record.BloodOxygen,
+            StepCount = record.StepCount,
+            ActivityStatus = (ActivityStatus)record.ActivityStatus,
+            Latitude = record.Latitude,
+            Longitude = record.Longitude,
+            SecureTransmissionStatus = record.SecureTransmissionStatus,
+        };
+
+        await HealthRecords.AddAsync(entity);
         await SaveChangesAsync();
     }
 
-    public async Task<List<HealthRecord>> GetAthleteHealthRecordsAsync(string athleteId)
+    public async Task<List<HealthRecord>> GetAthleteHealthRecordsAsync(string athleteId, ActivityStatus activityStatus)
     {
         return await HealthRecords
             .AsNoTracking()
             .Where(r => r.AthleteId == athleteId)
+            .Where(r => r.ActivityStatus == activityStatus)
             .ToListAsync();
     }
 
@@ -31,11 +58,13 @@ class HealthRecordDbContext : DbContext
             .ToListAsync();
     }
 
-    public async Task<HealthRecord?> GetHealthRecord(int recordId)
+    public async Task<HealthRecord?> GetHealthRecordAsync(int recordId)
     {
-        return await HealthRecords
+        var result = await HealthRecords
             .AsNoTracking()
             .FirstOrDefaultAsync(r => r.RecordId == recordId);
+
+        return result;
     }
 
     public async Task<Message> DeleteHealthRecordAsync(int recordId)
@@ -57,5 +86,4 @@ class HealthRecordDbContext : DbContext
 
         return new Message { RecordId = record.RecordId, Message_ = "Record was updated" };
     }
-
 }
