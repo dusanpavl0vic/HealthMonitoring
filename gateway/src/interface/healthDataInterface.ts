@@ -1,6 +1,6 @@
 export interface HealthRecordRequest {
   athleteId: string;
-  timestamp: string;
+  timestamp: string | Date;
   heartRate: number;
   bodyTemperature: number;
   bloodPressure: string;
@@ -21,7 +21,9 @@ enum ActivityStatus {
 
 export interface AthleteFilter {
   athleteId: string;
-  activityStatus: ActivityStatus;
+  activityStatus?: ActivityStatus;
+  startTime?: string;
+  endTime?: string;
 }
 
 export interface HealthRecord extends HealthRecordRequest {
@@ -36,3 +38,5 @@ export interface Message {
 export interface HealthRecordIdRequest {
   recordId: number;
 }
+
+

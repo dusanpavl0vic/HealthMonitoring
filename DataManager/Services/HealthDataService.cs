@@ -2,6 +2,9 @@ using Grpc.Core;
 using Google.Protobuf.WellKnownTypes;
 using DataManager.Data;
 using DataManager.Models;
+using DataManager.Grpc;
+using Microsoft.AspNetCore.Builder.Extensions;
+using System.Globalization;
 
 namespace DataManager.Services;
 
@@ -19,16 +22,42 @@ public class HealthDataService : HealthData.HealthDataBase
     }
 
     public override async Task<Empty> CreateHealthRecord(
-        IAsyncStreamReader<HealthRecordRequest> request,
+        HealthRecordRequest request,
         ServerCallContext context
     )
     {
-        await foreach (var record in request.ReadAllAsync())
+        try
         {
-            await _context.CreateHealthRecordAsync(record);
+            int recordId = await _context.CreateHealthRecordAsync(new HealthRecordModel
+            {
+                AthleteId = request.AthleteId,
+                Timestamp = request.Timestamp.ToDateTime(),
+                HeartRate = request.HeartRate,
+                BodyTemperature = request.BodyTemperature,
+                BloodPressure = request.BloodPressure,
+                BloodOxygen = request.BloodOxygen,
+                StepCount = request.StepCount,
+                ActivityStatus = (ActivityStatusModel)request.ActivityStatus,
+                Latitude = request.Latitude,
+                Longitude = request.Longitude,
+                SecureTransmissionStatus = request.SecureTransmissionStatus
+            });
+
+            _logger.LogInformation($"Created health record with ID: {recordId}");
+            return new Empty();
         }
-        return new Empty();
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while creating health record");
+
+            // grpc standard exception
+            throw new RpcException(new Status(
+                StatusCode.Internal,
+                $"Failed to create health record: {ex.Message}"
+            ));
+        }
     }
+
 
     public override async Task<HealthRecord> GetHealthRecord(HealthRecordIdRequest request, ServerCallContext context)
     {
@@ -37,41 +66,120 @@ public class HealthDataService : HealthData.HealthDataBase
         {
             throw new RpcException(new Status(StatusCode.NotFound, $"Record with ID {request.RecordId} not found."));
         }
-        return record;
+        return new HealthRecord
+            {
+                RecordId = record.RecordId,
+                AthleteId = record.AthleteId,
+                Timestamp = Timestamp.FromDateTime(record.Timestamp.ToUniversalTime()),
+                HeartRate = record.HeartRate,
+                BodyTemperature = record.BodyTemperature,
+                BloodPressure = record.BloodPressure,
+                BloodOxygen = record.BloodOxygen,
+                StepCount = record.StepCount,
+                ActivityStatus = (ActivityStatus)record.ActivityStatus,
+                Latitude = record.Latitude,
+                Longitude = record.Longitude,
+                SecureTransmissionStatus = record.SecureTransmissionStatus
+            };
     }
 
-    public override async Task GetAllHealthRecords(Empty request, IServerStreamWriter<HealthRecord> response, ServerCallContext context)
+    public override async Task<HealthRecordResponse> GetAllHealthRecords(Empty request, ServerCallContext context)
     {
         var records = await _context.GetAllHealthRecordsAsync();
-        foreach (HealthRecord record in records)
+
+        var response = new HealthRecordResponse();
+        if (records != null)
         {
-            await response.WriteAsync(record);
+            foreach (var record in records)
+            {
+                response.Records.Add(new HealthRecord
+                {
+                    RecordId = record.RecordId,
+                    AthleteId = record.AthleteId,
+                    Timestamp = Timestamp.FromDateTime(record.Timestamp.ToUniversalTime()),
+                    HeartRate = record.HeartRate,
+                    BodyTemperature = record.BodyTemperature,
+                    BloodPressure = record.BloodPressure,
+                    BloodOxygen = record.BloodOxygen,
+                    StepCount = record.StepCount,
+                    ActivityStatus = (ActivityStatus)record.ActivityStatus,
+                    Latitude = record.Latitude,
+                    Longitude = record.Longitude,
+                    SecureTransmissionStatus = record.SecureTransmissionStatus
+                });
+            }
         }
+
+        return await Task.FromResult(response);
     }
 
     public override async Task<Message> UpdateHealthRecord(HealthRecord request, ServerCallContext context)
     {
-        var record = _context.UpdateHealthRecordAsync(request);
-        if (record == null)
+        bool update = await _context.UpdateHealthRecordAsync(new HealthRecordModel
+        {
+            RecordId = request.RecordId,
+            AthleteId = request.AthleteId,
+            Timestamp = request.Timestamp.ToDateTime(),
+            HeartRate = request.HeartRate,
+            BodyTemperature = request.BodyTemperature,
+            BloodPressure = request.BloodPressure,
+            BloodOxygen = request.BloodOxygen,
+            StepCount = request.StepCount,
+            ActivityStatus = (ActivityStatusModel)request.ActivityStatus,
+            Latitude = request.Latitude,
+            Longitude = request.Longitude,
+            SecureTransmissionStatus = request.SecureTransmissionStatus
+        });
+
+        if (update == false)
         {
             throw new RpcException(new Status(StatusCode.NotFound, $"Record with ID {request.RecordId} not found."));
         }
-        return await Task.FromResult(record.Result);
+
+        return await Task.FromResult(new Message { RecordId = request.RecordId, Message_ = "Record was updated" });
     }
 
     public override async Task<Message> DeleteHealthRecord(HealthRecordIdRequest request, ServerCallContext context)
     {
-        var record = await _context.DeleteHealthRecordAsync(request.RecordId);
-        return await Task.FromResult(record.Result);
+        var delete = await _context.DeleteHealthRecordAsync(request.RecordId);
+        if (delete == false)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, $"Record with ID {request.RecordId} not found."));
+        }
+
+        return await Task.FromResult(new Message { RecordId = request.RecordId, Message_ = "Record was deleted" });
     }
 
-    public override async Task GetAthleteHealthRecords(AthleteFilter request, IServerStreamWriter<HealthRecord> response, ServerCallContext context)
+    public override async Task<HealthRecordResponse> GetAthleteHealthRecords(AthleteFilter request, ServerCallContext context)
     {
-        var records = await _context.GetAthleteHealthRecordsAsync(request.AthleteId, request.ActivityStatus);
-        foreach (HealthRecord record in records)
+        var records = await _context.GetAthleteHealthRecordsAsync(request.AthleteId, (ActivityStatusModel)request.ActivityStatus, request.StartTime, request.EndTime);
+        
+        var response = new HealthRecordResponse();
+        if (records != null)
         {
-            await response.WriteAsync(record);
+            foreach (var record in records)
+            {
+                response.Records.Add(new HealthRecord
+                {
+                    RecordId = record.RecordId,
+                    AthleteId = record.AthleteId,
+                    Timestamp = Timestamp.FromDateTime(record.Timestamp.ToUniversalTime()),
+                    HeartRate = record.HeartRate,
+                    BodyTemperature = record.BodyTemperature,
+                    BloodPressure = record.BloodPressure,
+                    BloodOxygen = record.BloodOxygen,
+                    StepCount = record.StepCount,
+                    ActivityStatus = (ActivityStatus)record.ActivityStatus,
+                    Latitude = record.Latitude,
+                    Longitude = record.Longitude,
+                    SecureTransmissionStatus = record.SecureTransmissionStatus
+                });
+            }
         }
+
+        _logger.LogInformation($"request");
+
+        return await Task.FromResult(response);
     }
 
 }

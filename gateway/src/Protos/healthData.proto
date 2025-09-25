@@ -1,21 +1,20 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
-
-package Gateway.Grpc;
+import "google/protobuf/timestamp.proto";
 
 service HealthData{
-  rpc CreateHealthRecord(stream HealthRecordRequest) returns (google.protobuf.Empty);
+  rpc CreateHealthRecord(HealthRecordRequest) returns (google.protobuf.Empty);
   rpc GetHealthRecord(HealthRecordIdRequest) returns (HealthRecord);
-  rpc GetAllHealthRecords(google.protobuf.Empty) returns (stream HealthRecord);
+  rpc GetAllHealthRecords(google.protobuf.Empty) returns (HealthRecordResponse);
   rpc UpdateHealthRecord(HealthRecord) returns (Message);
   rpc DeleteHealthRecord(HealthRecordIdRequest) returns (Message);
-  rpc GetAthleteHealthRecords(AthleteFilter) returns (stream HealthRecord);
+  rpc GetAthleteHealthRecords(AthleteFilter) returns (HealthRecordResponse);
 }
 
 message HealthRecordRequest {
   string athleteId = 1;
-  string timestamp = 2;
+  google.protobuf.Timestamp timestamp = 2;
   int32 heartRate = 3;
   float bodyTemperature = 4;
   string bloodPressure = 5;
@@ -27,10 +26,14 @@ message HealthRecordRequest {
   int32 secureTransmissionStatus = 11;
 }
 
+message HealthRecordResponse {
+  repeated HealthRecord records = 1;
+}
+
 message HealthRecord {
   int32 recordId = 1;
   string athleteId = 2;
-  string timestamp = 3;
+  google.protobuf.Timestamp timestamp = 3;
   int32 heartRate = 4;
   float bodyTemperature = 5;
   string bloodPressure = 6;
@@ -54,6 +57,8 @@ message Message {
 message AthleteFilter {
   string athleteId = 1;
   ActivityStatus activityStatus = 2;
+  google.protobuf.Timestamp startTime = 3;
+  google.protobuf.Timestamp endTime = 4;
 }
 
 enum ActivityStatus {

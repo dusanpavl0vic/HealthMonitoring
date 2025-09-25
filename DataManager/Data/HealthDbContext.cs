@@ -1,3 +1,5 @@
+using DataManager.Grpc;
+using DataManager.Models;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
@@ -10,55 +12,73 @@ public class HealthRecordDbContext : DbContext
     {
     }
 
-    public DbSet<HealthRecord> HealthRecords { get; set; }
+    public DbSet<HealthRecordModel> HealthRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<HealthRecord>()
+        modelBuilder.Entity<HealthRecordModel>()
             .HasKey(r => r.RecordId);
 
-        modelBuilder.Entity<HealthRecord>()
+        modelBuilder.Entity<HealthRecordModel>()
             .Property(r => r.RecordId)
             .ValueGeneratedOnAdd();
-    }
-    public async Task CreateHealthRecordAsync(HealthRecordRequest record)
-    {
-        var entity = new HealthRecord
+
+        modelBuilder.Entity<HealthRecordModel>(entity =>
         {
-            AthleteId = record.AthleteId,
-            Timestamp = record.Timestamp,
-            HeartRate = record.HeartRate,
-            BodyTemperature = record.BodyTemperature,
-            BloodPressure = record.BloodPressure,
-            BloodOxygen = record.BloodOxygen,
-            StepCount = record.StepCount,
-            ActivityStatus = (ActivityStatus)record.ActivityStatus,
-            Latitude = record.Latitude,
-            Longitude = record.Longitude,
-            SecureTransmissionStatus = record.SecureTransmissionStatus,
-        };
-
-        await HealthRecords.AddAsync(entity);
+            entity.Property(e => e.ActivityStatus)
+                .HasConversion<string>()
+                .HasColumnName("Activity_Status");
+        });
+    }
+    public async Task<int> CreateHealthRecordAsync(
+        HealthRecordModel record
+    ){
+        await HealthRecords.AddAsync(record);
         await SaveChangesAsync();
+
+        return record.RecordId;
     }
 
-    public async Task<List<HealthRecord>> GetAthleteHealthRecordsAsync(string athleteId, ActivityStatus activityStatus)
-    {
-        return await HealthRecords
-            .AsNoTracking()
-            .Where(r => r.AthleteId == athleteId)
-            .Where(r => r.ActivityStatus == activityStatus)
-            .ToListAsync();
-    }
-
-    public async Task<List<HealthRecord>> GetAllHealthRecordsAsync()
+    public async Task<List<HealthRecordModel>?> GetAllHealthRecordsAsync()
     {
         return await HealthRecords
             .AsNoTracking()
             .ToListAsync();
     }
+    
+    public async Task<List<HealthRecordModel>?> GetAthleteHealthRecordsAsync(
+        string athleteId,
+        ActivityStatusModel? activityStatus,
+        Timestamp? startTime,
+        Timestamp? endTime
+    )
+    {
+        var query = HealthRecords
+            .AsNoTracking()
+            .Where(r => r.AthleteId == athleteId);
 
-    public async Task<HealthRecord?> GetHealthRecordAsync(int recordId)
+        if (activityStatus.HasValue)
+        {
+            query = query.Where(r => r.ActivityStatus == activityStatus.Value);
+        }
+
+        if (startTime != null)
+        {
+            var start = startTime.ToDateTime().ToUniversalTime();
+            query = query.Where(r => r.Timestamp >= start);
+        }
+
+        if (endTime != null)
+        {
+            var start = endTime.ToDateTime().ToUniversalTime();
+            query = query.Where(r => r.Timestamp >= start);
+        }
+
+        return await query.ToListAsync();
+    }
+
+
+    public async Task<HealthRecordModel?> GetHealthRecordAsync(int recordId)
     {
         var result = await HealthRecords
             .AsNoTracking()
@@ -67,23 +87,28 @@ public class HealthRecordDbContext : DbContext
         return result;
     }
 
-    public async Task<Message> DeleteHealthRecordAsync(int recordId)
+    public async Task<bool> DeleteHealthRecordAsync(int recordId)
     {
         var record = await HealthRecords.FindAsync(recordId);
-        if (record != null)
-        {
-            HealthRecords.Remove(record);
-            await SaveChangesAsync();
-        }
+        if (record == null)
+            return false;
 
-        return new Message { RecordId = recordId, Message_ = "Record was deleted" };
+        HealthRecords.Remove(record);
+        await SaveChangesAsync();
+        return true;
     }
 
-    public async Task<Message> UpdateHealthRecordAsync(HealthRecord record)
+    public async Task<bool> UpdateHealthRecordAsync(HealthRecordModel record)
     {
+        var exists = await HealthRecords.AnyAsync(r => r.RecordId == record.RecordId);
+        if (!exists)
+        {
+            return false;
+        }
+
         HealthRecords.Update(record);
         await SaveChangesAsync();
 
-        return new Message { RecordId = record.RecordId, Message_ = "Record was updated" };
+        return true;
     }
 }
