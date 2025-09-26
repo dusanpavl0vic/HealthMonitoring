@@ -13,3 +13,17 @@ docker-compose down [-v] // Brise value iz dockera
 protoc --plugin=node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=. -I. ./src/Protos/healthData.proto
 
 docker exec -it mosquitto mosquitto_sub -h localhost -p 1883 -t "health/records"
+
+
+dotnet ef database update
+dotnet ef migrations add ime
+
+
+
+npm -y init
+npm install express
+npm install --save-dev typescript ts-node @types/node @types/express nodemon
+npx tsc --init
+npm install dotenv
+npm install --save-dev @types/dotenv
+

@@ -1,0 +1,65 @@
+asyncapi: 3.0.0
+info:
+  title: DataManager API
+  version: 1.0.0
+
+servers:
+  mosquitto:
+    host: mqtt://mosquitto:1883
+    protocol: mqtt
+
+channels:
+  health/records:
+    messages:
+      healthRecordMessage:
+        $ref: "#/components/messages/HealthRecordMessage"
+    publish:
+      operationId: publishHealthRecord
+
+components:
+  messages:
+    HealthRecordMessage:
+      payload:
+        $ref: "#/components/schemas/HealthRecord"
+
+  schemas:
+    HealthRecord:
+      type: object
+      properties:
+        recordId:
+          type: integer
+        athleteId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        heartRate:
+          type: number
+        bodyTemperature:
+          type: number
+        bloodPressure:
+          type: string
+        bloodOxygen:
+          type: number
+        stepCount:
+          type: number
+        activityStatus:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        secureTransmissionStatus:
+          type: number
+      required:
+        - athleteId
+        - timestamp
+        - heartRate
+        - bodyTemperature
+        - bloodPressure
+        - bloodOxygen
+        - stepCount
+        - activityStatus
+        - latitude
+        - longitude
+        - secureTransmissionStatus
