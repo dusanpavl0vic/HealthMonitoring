@@ -1,14 +1,16 @@
 using DataManager.Data;
 using DataManager.Services;
+using DataManager.Messaging;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddGrpc();
 
-
 builder.Services.AddDbContext<HealthRecordDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddSingleton<MqttPublisher>();
 
 var app = builder.Build();
 

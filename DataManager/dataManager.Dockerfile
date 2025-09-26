@@ -1,6 +1,6 @@
 # Build stage
 FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /usr/src/app
+WORKDIR /src
 
 COPY *.csproj ./
 RUN dotnet restore

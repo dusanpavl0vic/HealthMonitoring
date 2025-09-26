@@ -25,8 +25,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./Gateway:/app
-    command: npm run dev
+      - ./Gateway/src:/usr/src/app/src
     depends_on:
       - datamanager
 
@@ -43,6 +42,16 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    #restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto:/mosquitto/config
 volumes:
   postgres_data:
