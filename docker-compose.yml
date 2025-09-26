@@ -1,15 +1,34 @@
 services:
+  datamanager:
+    platform: linux/amd64
+    build:
+      context: ./DataManager
+      dockerfile: dataManager.Dockerfile
+    container_name: dataManager
+    ports:
+      - "5266:5266"
+      - "7066:7066"
+    volumes:
+      - ./DataManager:/src
+      - /src/bin
+      - /src/obj
+    environment:
+      - ASPNETCORE_URLS=http://+:5266
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=hmDB;Username=postgres;Password=postgres
+
   gateway:
     build:
-      context: ./gateway
+      context: ./Gateway
       dockerfile: gateway.Dockerfile
     container_name: gateway
     ports:
       - "3000:3000"
     volumes:
-      - ./gateway:/app
-      - /app/node_modules
+      - ./Gateway:/app
     command: npm run dev
+    depends_on:
+      - datamanager
 
   postgres:
     image: postgres:latest
