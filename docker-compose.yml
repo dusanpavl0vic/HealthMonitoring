@@ -7,14 +7,15 @@ services:
     container_name: dataManager
     ports:
       - "5266:5266"
-      - "7216:7216"
+      - "7066:7066"
+    volumes:
+      - ./DataManager:/src
+      - /src/bin
+      - /src/obj
     environment:
       - ASPNETCORE_URLS=http://+:5266
       - DOTNET_RUNNING_IN_CONTAINER=true
       - ConnectionStrings__Default=Host=postgres;Port=5432;Database=hmDB;Username=postgres;Password=postgres
-      - DOTNET_USE_POLLING_FILE_WATCHER=true
-    depends_on:
-      - postgres
 
   gateway:
     build:
@@ -25,7 +26,6 @@ services:
       - "3000:3000"
     volumes:
       - ./Gateway:/app
-      - /app/node_modules
     command: npm run dev
     depends_on:
       - datamanager

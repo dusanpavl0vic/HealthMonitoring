@@ -9,19 +9,25 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "ts-node src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "gen:proto": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/grpc --ts_proto_opt=esModuleInterop=true,outputServices=grpc-js,outputClientImpl=grpc-js -I ./src/Protos ./src/Protos/healthData.proto"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.0",
     "@grpc/proto-loader": "^0.8.0",
     "dotenv": "^17.2.2",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/yamljs": "^0.2.34",
     "ts-node": "^10.9.2",
+    "ts-proto": "^2.7.7",
     "typescript": "^5.9.2"
   }
 }
