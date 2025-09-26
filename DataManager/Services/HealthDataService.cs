@@ -49,8 +49,6 @@ public class HealthDataService : HealthData.HealthDataBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while creating health record");
-
-            // grpc standard exception
             throw new RpcException(new Status(
                 StatusCode.Internal,
                 $"Failed to create health record: {ex.Message}"
