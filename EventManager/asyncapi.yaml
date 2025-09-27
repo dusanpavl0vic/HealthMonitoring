@@ -1,8 +1,7 @@
 asyncapi: 3.0.0
 info:
-  title: DataManager
+  title: EventManager
   version: 1.0.0
-
 servers:
   mosquitto:
     host: mosquitto:1883
@@ -14,11 +13,24 @@ channels:
     messages:
       healthRecordMessage:
         $ref: "#/components/messages/healthRecord"
+
+  healthData:
+    address: health/data
+    messages:
+      healthRecordMessage:
+        $ref: "#/components/messages/healthRecord"
+
 operations:
-  sendHealthRecord:
-    action: send
+  receiveHealthRecord:
+    action: receive
     channel:
       $ref: "#/channels/healthRecords"
+
+  forwardHealthRecord:
+    action: send
+    channel:
+      $ref: "#/channels/healthData"
+
 components:
   messages:
     healthRecord:

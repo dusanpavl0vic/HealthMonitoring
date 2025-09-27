@@ -167,3 +167,33 @@
 1758966983: Client mqttjs_584e59a3 closed its connection.
 1758966983: New connection from 172.20.0.4:59592 on port 1883.
 1758966983: New client connected from 172.20.0.4:59592 as mqttjs_2244dc25 (p2, c1, k60).
+1758968550: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758969094: mosquitto version 2.0.22 terminating
+1758969094: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758969095: mosquitto version 2.0.22 starting
+1758969095: Config loaded from /mosquitto/config/mosquitto.conf.
+1758969095: Opening ipv4 listen socket on port 1883.
+1758969095: Opening ipv6 listen socket on port 1883.
+1758969095: mosquitto version 2.0.22 running
+1758969097: New connection from 172.20.0.5:46972 on port 1883.
+1758969097: New client connected from 172.20.0.5:46972 as mqttjs_27d533e0 (p2, c1, k60).
+1758969126: Client mqttjs_27d533e0 closed its connection.
+1758969127: mosquitto version 2.0.22 terminating
+1758969127: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758969227: mosquitto version 2.0.22 starting
+1758969227: Config loaded from /mosquitto/config/mosquitto.conf.
+1758969227: Opening ipv4 listen socket on port 1883.
+1758969227: Opening ipv6 listen socket on port 1883.
+1758969227: mosquitto version 2.0.22 running
+1758969231: New connection from 172.20.0.4:48202 on port 1883.
+1758969231: New client connected from 172.20.0.4:48202 as mqttjs_345d3df1 (p2, c1, k60).
+1758969429: Client mqttjs_345d3df1 closed its connection.
+1758969430: mosquitto version 2.0.22 terminating
+1758969430: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758969435: mosquitto version 2.0.22 starting
+1758969435: Config loaded from /mosquitto/config/mosquitto.conf.
+1758969435: Opening ipv4 listen socket on port 1883.
+1758969435: Opening ipv6 listen socket on port 1883.
+1758969435: mosquitto version 2.0.22 running
+1758969438: New connection from 172.20.0.4:50102 on port 1883.
+1758969438: New client connected from 172.20.0.4:50102 as mqttjs_8f604088 (p2, c1, k60).

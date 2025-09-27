@@ -27,3 +27,9 @@ npx tsc --init
 npm install dotenv
 npm install --save-dev @types/dotenv
 
+
+
+OpenAPI koriscen ja swagger
+
+AsyncAPI koriscen je https://studio.asyncapi.com/#server-mosquitto za pisanje
+
