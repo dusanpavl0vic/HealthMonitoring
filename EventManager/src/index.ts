@@ -1,14 +1,27 @@
-import express, { Request, Response } from "express";
+const mqtt = require("mqtt");
+const client = mqtt.connect("mqtt://mosquitto:1883");
 
-const app = express();
-const port = process.env.PORT || 3001;
-
-app.use(express.json());
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from TypeScript Express!");
+client.on("connect", () => {
+  client.subscribe("health/records", (err: any) => {
+    if (err) {
+      console.log("ERROR: Subscribe na health/records \n");
+    }
+    else {
+      console.log("SUCCESS: Subscribe na health/records \n");
+    }
+  });
 });
 
-app.listen(port, () => {
-  console.log(`🚀 Server running on http://localhost:${port}`);
-});
+client.on("message", (topic: any, message: any) => {
+  console.log("Stigla sa " + topic + " poruka : " + message.toString() + "\n");
+
+
+  client.publish("health/data", message, (err: any) => {
+    if (err) {
+      console.log("ERROR: Slanje na health/data\n");
+    }
+    else {
+      console.log("SUCCESS: Slanje na health/data\n");
+    }
+  })
+})

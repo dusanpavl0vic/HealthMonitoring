@@ -29,20 +29,6 @@ services:
     depends_on:
       - datamanager
 
-  postgres:
-    image: postgres:latest
-    container_name: postgreDB
-    restart: always
-    environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
-      # - POSTGRES_USER=meda
-      # - POSTGRES_PASSWORD=meda
-      - POSTGRES_DB=hmDB
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
   mosquitto:
     image: eclipse-mosquitto
     hostname: mosquitto
@@ -67,6 +53,19 @@ services:
       - ./EventManager/src:/app/src
     depends_on:
       - mosquitto
+  postgres:
+    image: postgres:latest
+    container_name: postgreDB
+    restart: always
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      # - POSTGRES_USER=meda
+      # - POSTGRES_PASSWORD=meda
+      - POSTGRES_DB=hmDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:

@@ -5,61 +5,60 @@ info:
 
 servers:
   mosquitto:
-    host: mqtt://mosquitto:1883
+    host: mosquitto:1883
     protocol: mqtt
 
 channels:
-  health/records:
+  healthRecords:
+    address: health/records
     messages:
       healthRecordMessage:
-        $ref: "#/components/messages/HealthRecordMessage"
-    publish:
-      operationId: publishHealthRecord
-
+        $ref: "#/components/messages/healthRecord"
+operations:
+  sendHealthRecord:
+    action: send
+    channel:
+      $ref: "#/channels/healthRecords"
 components:
   messages:
-    HealthRecordMessage:
+    healthRecord:
       payload:
-        $ref: "#/components/schemas/HealthRecord"
-
-  schemas:
-    HealthRecord:
-      type: object
-      properties:
-        recordId:
-          type: integer
-        athleteId:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-        heartRate:
-          type: number
-        bodyTemperature:
-          type: number
-        bloodPressure:
-          type: string
-        bloodOxygen:
-          type: number
-        stepCount:
-          type: number
-        activityStatus:
-          type: integer
-        latitude:
-          type: number
-        longitude:
-          type: number
-        secureTransmissionStatus:
-          type: number
-      required:
-        - athleteId
-        - timestamp
-        - heartRate
-        - bodyTemperature
-        - bloodPressure
-        - bloodOxygen
-        - stepCount
-        - activityStatus
-        - latitude
-        - longitude
-        - secureTransmissionStatus
+        type: object
+        properties:
+          recordId:
+            type: integer
+          athleteId:
+            type: string
+          timestamp:
+            type: string
+            format: date-time
+          heartRate:
+            type: number
+          bodyTemperature:
+            type: number
+          bloodPressure:
+            type: string
+          bloodOxygen:
+            type: number
+          stepCount:
+            type: number
+          activityStatus:
+            type: integer
+          latitude:
+            type: number
+          longitude:
+            type: number
+          secureTransmissionStatus:
+            type: number
+        required:
+          - athleteId
+          - timestamp
+          - heartRate
+          - bodyTemperature
+          - bloodPressure
+          - bloodOxygen
+          - stepCount
+          - activityStatus
+          - latitude
+          - longitude
+          - secureTransmissionStatus
