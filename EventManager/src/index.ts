@@ -1,3 +1,6 @@
+import { HealthRecord } from "./interfaces/healthData";
+import { normalizeRecord, validateHealthRecord } from "./services/referenceRanges";
+
 const mqtt = require("mqtt");
 const client = mqtt.connect("mqtt://mosquitto:1883");
 
@@ -12,11 +15,18 @@ client.on("connect", () => {
   });
 });
 
-client.on("message", (topic: any, message: any) => {
+client.on("message", (topic: string, message: HealthRecord) => {
   console.log("Stigla sa " + topic + " poruka : " + message.toString() + "\n");
 
+  const raw = JSON.parse(message.toString());
+  const record = normalizeRecord(raw);
+  const result = validateHealthRecord(record);
 
-  client.publish("health/data", message, (err: any) => {
+  console.log(result);
+
+  // let newTopic: string = "health/" + record.athleteId;
+  let newTopic: string = "health/datas" + record.athleteId;
+  client.publish(newTopic, message, (err: any) => {
     if (err) {
       console.log("ERROR: Slanje na health/data\n");
     }
@@ -25,3 +35,4 @@ client.on("message", (topic: any, message: any) => {
     }
   })
 })
+

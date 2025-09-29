@@ -1,0 +1,52 @@
+🔹 1. Organizacija topic-a
+Jedan univerzalan topic (health/data) i u payload-u šalješ athleteId
+  Prednost: Backend se subscribe-uje samo jednom, i onda sam deli podatke po atletičarima.
+  Mana: Svi podaci idu na isti stream (ali to i nije problem jer backend sve filtrira).
+
+🔹 2. Evidencija atletičara
+Pošto aplikacija ne zna unapred sve atlete, najbolje je:
+  Backend kad primi poruku, proveri athleteId.
+  Ako tog athleteId nema u memoriji/bazi → doda ga u listu “poznatih atleta”.
+  Frontend može da traži listu atleta (API: /api/athletes) i da ih prikaže u dropdown-u.
+  Kad stignu novi atletski podaci → frontend ažurira listu u real-time (dinamički dodaje atletu ako ga pre nije bilo).
+
+🔹 3. Model podataka za frontend
+Za svaki atletičar trebaš da vodiš:
+  Lista timestampova (svaka nova poruka = novi timestamp u listu).
+  Detaljni podaci vezani za taj timestamp (puls, pritisak, poruke, status).
+  Agregisani podaci za grafikone (npr. za puls kroz vreme, korake, pritisak).
+👉 Dakle, imaš timeline (lista eventova) + grafikone (trendovi kroz vreme).
+
+🔹 4. UI/UX ideja
+Dashboard:
+  Dropdown/menija: izbor atletičara (dinamički se puni).
+  Timeline (scroll ili kružni sat): prikazuje sve poruke kao događaje.
+    -Normalne bele,
+    -Warning žute,
+    -Critical crvene.
+  Klikom na timestamp → prikazuju se detaljni podaci za taj trenutak.
+Grafikoni (line charts)
+  Puls kroz vreme
+  Pritisak kroz vreme
+  Koraci kroz vreme
+  (ovi grafikoni koriste sve timestampove, nezavisno od selekcije)
+Poruke (alerts)
+  Za odabrani timestamp: pokažeš one koje su stigle (warning/critical).
+  Može i dodatna “feed” komponenta za sve atlete (npr. globalna lista kritičnih poruka).
+
+🔹 5. Stream podataka
+Backend se subscribe-uje na jedan topic.
+Na svaku novu poruku backend:
+  Upisuje podatke u memoriju/bazu (timestamp, athleteId, metrics, status).
+  Šalje SSE ka frontend-u → frontend ažurira odgovarajućeg atletičara i njegov timeline/grafikone.
+
+🔹 6. Krug (vizualni sat)
+Vizuelno → kao donut chart ili rotirajući timeline.
+Automatski se “vrti” i naglašava nove poruke.
+Ručno → korisnik može da skroluje kroz prethodne eventove.
+
+📌 Ukratko:
+Topic: jedan univerzalan (health/data) → backend raspoređuje.
+Evidencija atleta: vodi je backend na osnovu pristiglih poruka.
+Frontend: dropdown za izbor atleta, timeline za poruke, grafikoni za trendove.
+UX: timeline + grafikon kombinacija → brzo vidiš i trenutne evente i širu sliku.

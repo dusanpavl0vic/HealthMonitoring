@@ -1,3 +1,11 @@
+mcr.microsoft.com/dotnet/aspnet:9.0 nema ARM64
+
+M1 je igradjen na linux/arm64 docker bira platformu na kojoj je instaliran
+zato radim --platform=linux/amd64 docker povuce amd64 image i pokrene ga preko emulacije
+
+
+
+
 docker exec -it postgreDB psql -U postgres -d hmDB
 
 TRUNCATE TABLE health_data RESTART IDENTITY CASCADE;

@@ -1071,7 +1071,7 @@ export interface HealthDataClient extends Client {
 }
 
 export const HealthDataClient = makeGenericClientConstructor(HealthDataService, "HealthData") as unknown as {
-  new(address: string, credentials: ChannelCredentials, options?: Partial<ClientOptions>): HealthDataClient;
+  new (address: string, credentials: ChannelCredentials, options?: Partial<ClientOptions>): HealthDataClient;
   service: typeof HealthDataService;
   serviceName: string;
 };
