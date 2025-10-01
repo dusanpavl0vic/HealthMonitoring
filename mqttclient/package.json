@@ -5,20 +5,27 @@
   "scripts": {
     "dev": "npx next dev --turbopack -p 4000",
     "build": "npx next build",
-    "start": "npx next start -p 4000"
+    "start": "npx next start -p 4000",
+    "data-service": "ts-node servers/dataService.ts"
   },
   "dependencies": {
     "mqtt": "^5.14.1",
     "next": "15.5.4",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "recharts": "^3.2.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
+    "@types/mqtt": "^0.0.34",
+    "@types/node": "^20.19.19",
+    "@types/react": "^19.1.16",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }

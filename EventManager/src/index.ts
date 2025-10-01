@@ -23,10 +23,10 @@ client.on("message", (topic: string, message: HealthRecord) => {
   const result = validateHealthRecord(record);
 
   console.log(result);
-
+  const resultString = JSON.stringify(result);
   // let newTopic: string = "health/" + record.athleteId;
-  let newTopic: string = "health/datas" + record.athleteId;
-  client.publish(newTopic, message, (err: any) => {
+  let newTopic: string = "health/data"
+  client.publish(newTopic, resultString, (err: any) => {
     if (err) {
       console.log("ERROR: Slanje na health/data\n");
     }
