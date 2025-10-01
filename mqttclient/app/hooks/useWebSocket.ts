@@ -1,4 +1,3 @@
-// app/hooks/useWebSocket.ts
 import { HealthRecord, ValidationResult } from '@/app/interfaces/healthData';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
