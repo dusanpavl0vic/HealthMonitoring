@@ -9,13 +9,13 @@ services:
       - "5266:5266"
       - "7066:7066"
     volumes:
-      - ./DataManager:/src
-      - /src/bin
-      - /src/obj
+      - ./DataManager/src:/src
     environment:
       - ASPNETCORE_URLS=http://+:5266
       - DOTNET_RUNNING_IN_CONTAINER=true
-      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=hmDB;Username=postgres;Password=postgres
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=hmDB;Username=postgres
+    depends_on:
+      - mosquitto
 
   gateway:
     build:
@@ -25,11 +25,34 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./Gateway:/app
-    command: npm run dev
+      - ./Gateway/src:/app/src
     depends_on:
       - datamanager
 
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    #restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      #- ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+  eventmanager:
+    build:
+      context: ./EventManager
+      dockerfile: eventmanager.Dockerfile
+    container_name: eventmanager
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./EventManager/src:/app/src
+    depends_on:
+      - mosquitto
   postgres:
     image: postgres:latest
     container_name: postgreDB

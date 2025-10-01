@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataManager.Migrations
 {
     [DbContext(typeof(HealthRecordDbContext))]
-    [Migration("20250925152710_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250926162829_prva")]
+    partial class prva
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

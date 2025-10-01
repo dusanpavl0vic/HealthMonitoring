@@ -1,0 +1,23 @@
+{
+  "name": "healthmonitoring",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/dusanpavl0vic/HealthMonitoring#readme",
+  "bugs": {
+    "url": "https://github.com/dusanpavl0vic/HealthMonitoring/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dusanpavl0vic/HealthMonitoring.git"
+  },
+  "scripts": {
+    "dev": "cd mqttclient && npm run dev",
+    "build": "cd mqttclient && npm run build",
+    "start": "cd mqttclient && npm run start",
+    "serve": "npm run build && npm start"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js"
+}

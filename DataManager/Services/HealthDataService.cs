@@ -5,43 +5,64 @@ using DataManager.Models;
 using DataManager.Grpc;
 using Microsoft.AspNetCore.Builder.Extensions;
 using System.Globalization;
+using DataManager.MQTT;
+using System.Text.Json;
 
 namespace DataManager.Services;
 
 public class HealthDataService : HealthData.HealthDataBase
 {
     private readonly HealthRecordDbContext _context;
+    private readonly MqttPublisher _mqttPublisher;
     private readonly ILogger<HealthDataService> _logger;
+
     public HealthDataService(
         HealthRecordDbContext context,
-        ILogger<HealthDataService> logger
-        )
-    {
+        ILogger<HealthDataService> logger,
+        MqttPublisher mqttPublisher
+    ) {
         _logger = logger;
         _context = context;
+        _mqttPublisher = mqttPublisher;
     }
 
     public override async Task<Empty> CreateHealthRecord(
         HealthRecordRequest request,
         ServerCallContext context
-    )
-    {
+    ){
         try
         {
             int recordId = await _context.CreateHealthRecordAsync(new HealthRecordModel
             {
-                AthleteId = request.AthleteId,
-                Timestamp = request.Timestamp.ToDateTime(),
-                HeartRate = request.HeartRate,
-                BodyTemperature = request.BodyTemperature,
-                BloodPressure = request.BloodPressure,
-                BloodOxygen = request.BloodOxygen,
-                StepCount = request.StepCount,
-                ActivityStatus = (ActivityStatusModel)request.ActivityStatus,
-                Latitude = request.Latitude,
-                Longitude = request.Longitude,
-                SecureTransmissionStatus = request.SecureTransmissionStatus
+                athleteId = request.AthleteId,
+                timestamp = request.Timestamp.ToDateTime(),
+                heartRate = request.HeartRate,
+                bodyTemperature = request.BodyTemperature,
+                bloodPressure = request.BloodPressure,
+                bloodOxygen = request.BloodOxygen,
+                stepCount = request.StepCount,
+                activityStatus = (ActivityStatusModel)request.ActivityStatus,
+                latitude = request.Latitude,
+                longitude = request.Longitude,
+                secureTransmissionStatus = request.SecureTransmissionStatus
             });
+
+            HealthRecordModel record = new HealthRecordModel
+            {
+                athleteId = request.AthleteId,
+                timestamp = request.Timestamp.ToDateTime(),
+                heartRate = request.HeartRate,
+                bodyTemperature = request.BodyTemperature,
+                bloodPressure = request.BloodPressure,
+                bloodOxygen = request.BloodOxygen,
+                stepCount = request.StepCount,
+                activityStatus = (ActivityStatusModel)request.ActivityStatus,
+                latitude = request.Latitude,
+                longitude = request.Longitude,
+                secureTransmissionStatus = request.SecureTransmissionStatus
+            };
+
+            await _mqttPublisher.PublishAsync("health/records", record, retain: true);
 
             _logger.LogInformation($"Created health record with ID: {recordId}");
             return new Empty();
@@ -66,18 +87,18 @@ public class HealthDataService : HealthData.HealthDataBase
         }
         return new HealthRecord
             {
-                RecordId = record.RecordId,
-                AthleteId = record.AthleteId,
-                Timestamp = Timestamp.FromDateTime(record.Timestamp.ToUniversalTime()),
-                HeartRate = record.HeartRate,
-                BodyTemperature = record.BodyTemperature,
-                BloodPressure = record.BloodPressure,
-                BloodOxygen = record.BloodOxygen,
-                StepCount = record.StepCount,
-                ActivityStatus = (ActivityStatus)record.ActivityStatus,
-                Latitude = record.Latitude,
-                Longitude = record.Longitude,
-                SecureTransmissionStatus = record.SecureTransmissionStatus
+                RecordId = record.recordId,
+                AthleteId = record.athleteId,
+                Timestamp = Timestamp.FromDateTime(record.timestamp.ToUniversalTime()),
+                HeartRate = record.heartRate,
+                BodyTemperature = record.bodyTemperature,
+                BloodPressure = record.bloodPressure,
+                BloodOxygen = record.bloodOxygen,
+                StepCount = record.stepCount,
+                ActivityStatus = (ActivityStatus)record.activityStatus,
+                Latitude = record.latitude,
+                Longitude = record.longitude,
+                SecureTransmissionStatus = record.secureTransmissionStatus
             };
     }
 
@@ -92,18 +113,18 @@ public class HealthDataService : HealthData.HealthDataBase
             {
                 response.Records.Add(new HealthRecord
                 {
-                    RecordId = record.RecordId,
-                    AthleteId = record.AthleteId,
-                    Timestamp = Timestamp.FromDateTime(record.Timestamp.ToUniversalTime()),
-                    HeartRate = record.HeartRate,
-                    BodyTemperature = record.BodyTemperature,
-                    BloodPressure = record.BloodPressure,
-                    BloodOxygen = record.BloodOxygen,
-                    StepCount = record.StepCount,
-                    ActivityStatus = (ActivityStatus)record.ActivityStatus,
-                    Latitude = record.Latitude,
-                    Longitude = record.Longitude,
-                    SecureTransmissionStatus = record.SecureTransmissionStatus
+                    RecordId = record.recordId,
+                    AthleteId = record.athleteId,
+                    Timestamp = Timestamp.FromDateTime(record.timestamp.ToUniversalTime()),
+                    HeartRate = record.heartRate,
+                    BodyTemperature = record.bodyTemperature,
+                    BloodPressure = record.bloodPressure,
+                    BloodOxygen = record.bloodOxygen,
+                    StepCount = record.stepCount,
+                    ActivityStatus = (ActivityStatus)record.activityStatus,
+                    Latitude = record.latitude,
+                    Longitude = record.longitude,
+                    SecureTransmissionStatus = record.secureTransmissionStatus
                 });
             }
         }
@@ -115,18 +136,18 @@ public class HealthDataService : HealthData.HealthDataBase
     {
         bool update = await _context.UpdateHealthRecordAsync(new HealthRecordModel
         {
-            RecordId = request.RecordId,
-            AthleteId = request.AthleteId,
-            Timestamp = request.Timestamp.ToDateTime(),
-            HeartRate = request.HeartRate,
-            BodyTemperature = request.BodyTemperature,
-            BloodPressure = request.BloodPressure,
-            BloodOxygen = request.BloodOxygen,
-            StepCount = request.StepCount,
-            ActivityStatus = (ActivityStatusModel)request.ActivityStatus,
-            Latitude = request.Latitude,
-            Longitude = request.Longitude,
-            SecureTransmissionStatus = request.SecureTransmissionStatus
+            recordId = request.RecordId,
+            athleteId = request.AthleteId,
+            timestamp = request.Timestamp.ToDateTime(),
+            heartRate = request.HeartRate,
+            bodyTemperature = request.BodyTemperature,
+            bloodPressure = request.BloodPressure,
+            bloodOxygen = request.BloodOxygen,
+            stepCount = request.StepCount,
+            activityStatus = (ActivityStatusModel)request.ActivityStatus,
+            latitude = request.Latitude,
+            longitude = request.Longitude,
+            secureTransmissionStatus = request.SecureTransmissionStatus
         });
 
         if (update == false)
@@ -159,18 +180,18 @@ public class HealthDataService : HealthData.HealthDataBase
             {
                 response.Records.Add(new HealthRecord
                 {
-                    RecordId = record.RecordId,
-                    AthleteId = record.AthleteId,
-                    Timestamp = Timestamp.FromDateTime(record.Timestamp.ToUniversalTime()),
-                    HeartRate = record.HeartRate,
-                    BodyTemperature = record.BodyTemperature,
-                    BloodPressure = record.BloodPressure,
-                    BloodOxygen = record.BloodOxygen,
-                    StepCount = record.StepCount,
-                    ActivityStatus = (ActivityStatus)record.ActivityStatus,
-                    Latitude = record.Latitude,
-                    Longitude = record.Longitude,
-                    SecureTransmissionStatus = record.SecureTransmissionStatus
+                    RecordId = record.recordId,
+                    AthleteId = record.athleteId,
+                    Timestamp = Timestamp.FromDateTime(record.timestamp.ToUniversalTime()),
+                    HeartRate = record.heartRate,
+                    BodyTemperature = record.bodyTemperature,
+                    BloodPressure = record.bloodPressure,
+                    BloodOxygen = record.bloodOxygen,
+                    StepCount = record.stepCount,
+                    ActivityStatus = (ActivityStatus)record.activityStatus,
+                    Latitude = record.latitude,
+                    Longitude = record.longitude,
+                    SecureTransmissionStatus = record.secureTransmissionStatus
                 });
             }
         }

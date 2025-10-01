@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import swaggerUi from "swagger-ui-express";
-import YAML from "yamljs";
 import healthDataRoutes from './controllers/healthDataController';
 
 const app = express();
@@ -10,7 +9,7 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 
-const swaggerDocument = YAML.load("./openapi.yaml");
+const swaggerDocument = require("../openapi.json");
 app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(express.json());

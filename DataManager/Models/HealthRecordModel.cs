@@ -2,45 +2,46 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataManager.Models;
+
 [Table("health_data")]
 public class HealthRecordModel
 {
     [Key]
     [Column("record_id")]
-    public int RecordId { get; set; }
+    public int recordId { get; set; }
 
     [Column("athlete_id")]
-    public string AthleteId { get; set; } = null!;
+    public string athleteId { get; set; } = null!;
 
     [Column("timestamp")]
-    public DateTime Timestamp { get; set; }
+    public DateTime timestamp { get; set; }
 
     [Column("heart_rate")]
-    public int HeartRate { get; set; }
+    public int heartRate { get; set; }
 
     [Column("body_temperature")]
-    public float BodyTemperature { get; set; }
+    public float bodyTemperature { get; set; }
 
     [Column("plood_pressure")]
-    public string BloodPressure { get; set; } = null!;
+    public string bloodPressure { get; set; } = null!;
 
     [Column("blood_oxygen")]
-    public int BloodOxygen { get; set; }
+    public int bloodOxygen { get; set; }
 
     [Column("step_count")]
-    public int StepCount { get; set; }
+    public int stepCount { get; set; }
 
     [Column("activity_status")]
-    public ActivityStatusModel ActivityStatus { get; set; }
+    public ActivityStatusModel activityStatus { get; set; }
 
     [Column("latitude")]
-    public double Latitude { get; set; }
+    public double latitude { get; set; }
 
     [Column("longitude")]
-    public double Longitude { get; set; }
+    public double longitude { get; set; }
 
     [Column("secure_transmission_status")]
-    public int SecureTransmissionStatus { get; set; }
+    public int secureTransmissionStatus { get; set; }
 }
 
 
