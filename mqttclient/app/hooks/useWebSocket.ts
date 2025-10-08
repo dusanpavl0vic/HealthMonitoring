@@ -14,12 +14,12 @@ export function useWebSocket() {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    console.log("🔄 Connecting to WebSocket...");
+    console.log("Connecting to WebSocket...");
 
     socketRef.current = io('http://localhost:3002');
 
     socketRef.current.on('connect', () => {
-      console.log("✅ Connected to WebSocket");
+      console.log("Connected to WebSocket");
     });
 
     socketRef.current.on('health_update', (data: ValidationResult) => {

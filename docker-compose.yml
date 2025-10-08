@@ -67,5 +67,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  analytics:
+    build:
+      context: ./Analytics
+      dockerfile: ./analytics.Dockerfile
+    volumes:
+      - ./Analytics:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mosquitto
+
 volumes:
   postgres_data:

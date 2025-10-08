@@ -7,7 +7,7 @@ export default function HomePage() {
   const { athletesData } = useWebSocket();
 
   console.log(
-    "🏠 HomePage - Live athletes:",
+    "HomePage - Live athletes:",
     athletesData.map((a) => a.athleteId)
   );
 

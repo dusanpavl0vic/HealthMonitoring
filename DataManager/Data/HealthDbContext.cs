@@ -17,15 +17,15 @@ public class HealthRecordDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<HealthRecordModel>()
-            .HasKey(r => r.RecordId);
+            .HasKey(r => r.recordId);
 
         modelBuilder.Entity<HealthRecordModel>()
-            .Property(r => r.RecordId)
+            .Property(r => r.recordId)
             .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<HealthRecordModel>(entity =>
         {
-            entity.Property(e => e.ActivityStatus)
+            entity.Property(e => e.activityStatus)
                 .HasConversion<string>()
                 .HasColumnName("Activity_Status");
         });
@@ -36,7 +36,7 @@ public class HealthRecordDbContext : DbContext
         await HealthRecords.AddAsync(record);
         await SaveChangesAsync();
 
-        return record.RecordId;
+        return record.recordId;
     }
 
     public async Task<List<HealthRecordModel>?> GetAllHealthRecordsAsync()
@@ -55,23 +55,23 @@ public class HealthRecordDbContext : DbContext
     {
         var query = HealthRecords
             .AsNoTracking()
-            .Where(r => r.AthleteId == athleteId);
+            .Where(r => r.athleteId == athleteId);
 
         if (activityStatus.HasValue)
         {
-            query = query.Where(r => r.ActivityStatus == activityStatus.Value);
+            query = query.Where(r => r.activityStatus == activityStatus.Value);
         }
 
         if (startTime != null)
         {
             var start = startTime.ToDateTime().ToUniversalTime();
-            query = query.Where(r => r.Timestamp >= start);
+            query = query.Where(r => r.timestamp >= start);
         }
 
         if (endTime != null)
         {
             var start = endTime.ToDateTime().ToUniversalTime();
-            query = query.Where(r => r.Timestamp >= start);
+            query = query.Where(r => r.timestamp >= start);
         }
 
         return await query.ToListAsync();
@@ -82,7 +82,7 @@ public class HealthRecordDbContext : DbContext
     {
         var result = await HealthRecords
             .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.RecordId == recordId);
+            .FirstOrDefaultAsync(r => r.recordId == recordId);
 
         return result;
     }
@@ -100,7 +100,7 @@ public class HealthRecordDbContext : DbContext
 
     public async Task<bool> UpdateHealthRecordAsync(HealthRecordModel record)
     {
-        var exists = await HealthRecords.AnyAsync(r => r.RecordId == record.RecordId);
+        var exists = await HealthRecords.AnyAsync(r => r.recordId == record.recordId);
         if (!exists)
         {
             return false;
