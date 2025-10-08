@@ -1,0 +1,12 @@
+analytics-service
+bin/
+out/
+
+*.idea/
+*.vscode/
+*.DS_Store
+
+*.log
+tmp/
+
+vendor/
