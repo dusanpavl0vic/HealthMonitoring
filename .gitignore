@@ -1,1 +1,16 @@
 *.csv
+
+# Build artefakti
+/DataManager/publish/
+/bin/
+/obj/
+
+# VS Code
+.vscode/
+
+# User-specific
+*.user
+*.suo
+
+# Logs
+*.log
