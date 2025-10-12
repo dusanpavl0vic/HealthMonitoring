@@ -76,8 +76,10 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - nats
       - mosquitto
       - mlaas
+        # condition: service_healthy # dodao sam ovo da porverava da li je server mlaas startovan a ne samo kontejner jer mu treba vise vremena da se pokrene i kasnije imam problem
 
   mlaas:
     build:
@@ -87,6 +89,18 @@ services:
       - ./MLaaS:/app
     ports:
       - "8001:8001"
+    # healthcheck: # Provera zdravlja servisa
+    #   test: ["CMD", "curl", "-f", "http://localhost:8001/docs"]
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 20
+    #   start_period: 30s
+  nats:
+    image: nats:latest
+    container_name: nats
+    ports:
+      - "4222:4222"
+      - "8222:8222"
 
 volumes:
   postgres_data:

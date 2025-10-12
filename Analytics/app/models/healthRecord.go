@@ -15,7 +15,6 @@ type HealthRecord struct{
 }
 
 type ActivityStatus int
-
 const ( 
 		Walking ActivityStatus = iota
   	Cycling
