@@ -14,4 +14,6 @@ def predict_activity(data: AthletePredictData):
     result = predict_activity_service(data)
     return result
 
-
+@app.get("/health")
+def health():
+    return {"status": "ok"}

@@ -1,3 +1,4 @@
+version: "3.9"
 services:
   datamanager:
     platform: linux/amd64
@@ -76,9 +77,12 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - nats
-      - mosquitto
-      - mlaas
+      nats:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+      mlaas:
+        condition: service_healthy
         # condition: service_healthy # dodao sam ovo da porverava da li je server mlaas startovan a ne samo kontejner jer mu treba vise vremena da se pokrene i kasnije imam problem
 
   mlaas:
@@ -89,12 +93,18 @@ services:
       - ./MLaaS:/app
     ports:
       - "8001:8001"
-    # healthcheck: # Provera zdravlja servisa
-    #   test: ["CMD", "curl", "-f", "http://localhost:8001/docs"]
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 20
-    #   start_period: 30s
+    healthcheck: # Provera zdravlja servisa
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import requests; r = requests.get('http://localhost:8001/health'); assert r.status_code == 200",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
   nats:
     image: nats:latest
     container_name: nats
