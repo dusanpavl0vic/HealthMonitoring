@@ -1,17 +1,10 @@
-import { HealthRecord, ValidationResult } from "@/app/interfaces/healthData";
-import MiniLocationMap from "../MiniLocationMap";
+import { AthleteData } from "@/interfaces/athleteData";
+import MiniLocationMap from "../LoacationMap/MiniLocationMap";
 import AthleteFooter from "./AthleteFooter";
 import AthleteHeader from "./AthleteHeader";
 import HealthAlerts from "./HealthAlerts";
 import MetricsGrid from "./MetricsGrid";
 import StepsChart from "./StepsChart";
-
-export interface AthleteData {
-  athleteId: string;
-  currentData: ValidationResult | null;
-  history: HealthRecord[];
-  lastUpdate: Date;
-}
 
 interface AthleteCardProps {
   athleteData: AthleteData;

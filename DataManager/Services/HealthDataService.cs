@@ -49,6 +49,7 @@ public class HealthDataService : HealthData.HealthDataBase
 
             HealthRecordModel record = new HealthRecordModel
             {
+                recordId = recordId,
                 athleteId = request.AthleteId,
                 timestamp = request.Timestamp.ToDateTime(),
                 heartRate = request.HeartRate,

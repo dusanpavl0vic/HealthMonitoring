@@ -1,0 +1,46 @@
+asyncapi: 2.6.0
+info:
+  title: Athlete Analytics Service
+  version: 1.0.0
+servers:
+  nats:
+    url: nats://nats:4222
+    protocol: nats
+channels:
+  athlete/predictions:
+    publish:
+      message:
+        $ref: "#/components/messages/AthletePredictResponse"
+components:
+  messages:
+    AthletePredictResponse:
+      name: AthletePredictResponse
+      payload:
+        type: object
+        properties:
+          athleteId:
+            type: string
+          timestamp:
+            type: string
+          healthRecord:
+            type: object
+            properties:
+              heartRate:
+                type: number
+              bodyTemperature:
+                type: number
+              bloodPressure:
+                type: string
+              bloodOxygen:
+                type: number
+              stepCount:
+                type: integer
+          prediction:
+            type: object
+            properties:
+              predicted_activity:
+                type: string
+              confidence:
+                type: number
+              error:
+                type: string

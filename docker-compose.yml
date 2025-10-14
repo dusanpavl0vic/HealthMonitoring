@@ -1,3 +1,4 @@
+version: "3.9"
 services:
   datamanager:
     platform: linux/amd64
@@ -66,6 +67,50 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  analytics:
+    build:
+      context: ./Analytics
+      dockerfile: ./analytics.Dockerfile
+    volumes:
+      - ./Analytics:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      nats:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+      mlaas:
+        condition: service_healthy
+        # condition: service_healthy # dodao sam ovo da porverava da li je server mlaas startovan a ne samo kontejner jer mu treba vise vremena da se pokrene i kasnije imam problem
+
+  mlaas:
+    build:
+      context: ./MLaaS
+      dockerfile: ./mlaas.Dockerfile
+    volumes:
+      - ./MLaaS:/app
+    ports:
+      - "8001:8001"
+    healthcheck: # Provera zdravlja servisa
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import requests; r = requests.get('http://localhost:8001/health'); assert r.status_code == 200",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+  nats:
+    image: nats:latest
+    container_name: nats
+    ports:
+      - "4222:4222"
+      - "8222:8222"
 
 volumes:
   postgres_data:

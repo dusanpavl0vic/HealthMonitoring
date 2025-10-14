@@ -20,7 +20,7 @@ client.on("message", (topic: string, message: HealthRecord) => {
 
   const raw = JSON.parse(message.toString());
   const record = normalizeRecord(raw);
-  const result = validateHealthRecord(record);
+  const result = validateHealthRecord(raw);
 
   console.log(result);
   const resultString = JSON.stringify(result);

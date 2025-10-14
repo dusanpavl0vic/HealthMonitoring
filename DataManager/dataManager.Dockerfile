@@ -13,3 +13,6 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 ENTRYPOINT ["dotnet", "DataManager.dll"]
+
+
+#https://hub.docker.com/r/microsoft/dotnet

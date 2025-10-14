@@ -1,5 +1,5 @@
 // app/components/dashboard/AthleteCard/MiniLocationMap.tsx
-import { HealthRecord } from "@/app/interfaces/healthData";
+import { HealthRecord } from "@/interfaces/healthData";
 
 interface MiniLocationMapProps {
   currentData: HealthRecord | null;
