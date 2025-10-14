@@ -1,10 +1,9 @@
 import { connect } from 'nats';
 
-async function setupNATSClient() {
+async function clientNats() {
   try {
     const nc = await connect({
       servers: 'localhost:4222',
-      timeout: 3000
     });
 
     console.log('Connected to NATS server');
@@ -24,4 +23,4 @@ async function setupNATSClient() {
   }
 }
 
-export { setupNATSClient };
+export { clientNats };

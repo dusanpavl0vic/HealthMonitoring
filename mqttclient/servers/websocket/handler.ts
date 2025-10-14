@@ -40,39 +40,25 @@ export function setupMQTTMessageHandler(mqttClient: mqtt.MqttClient, topic: stri
   });
 }
 
-//TODO: nats handler
-// export function setupNATSHandler(ws: WebSocket, natsClient: any) {
-//   const stringCodec = StringCodec();
+export function setupNATSHandler(nc: any, topic: string) {
+  try {
+    const sub = nc.subscribe(topic);
 
-//   const subscriptions = ['updates', 'notifications', 'events'];
+    (async () => {
+      for await (const msg of sub) {
+        const data = msg.string();
 
-//   subscriptions.forEach(subject => {
-//     try {
-//       const subscription = natsClient.subscribe(subject);
+        const parsedData: NatsMessage = JSON.parse(data);
+        io.emit("health_predicted_activity", parsedData);
+        console.log(`[NATS] Received message:`, parsedData);
+      }
+    })().catch(err => {
+      console.error('Error in NATS subscription loop:', err);
+    });
 
-//       (async () => {
-//         for await (const msg of subscription) {
-//           console.log(`📨 NATS message received on ${msg.subject}:`, stringCodec.decode(msg.data));
-
-//           const payload = {
-//             type: 'nats-message',
-//             subject: msg.subject,
-//             data: stringCodec.decode(msg.data),
-//             timestamp: new Date().toISOString()
-//           };
-
-//           if (ws.readyState === WebSocket.OPEN) {
-//             ws.send(JSON.stringify(payload));
-//           }
-//         }
-//       })().catch(err => {
-//         console.error(`NATS subscription error for ${subject}:`, err);
-//       });
-
-//       console.log(`Subscribed to NATS subject: ${subject}`);
-
-//     } catch (error) {
-//       console.error(`Failed to subscribe to NATS subject ${subject}:`, error);
-//     }
-//   });
-// }
+    return sub;
+  } catch (error) {
+    console.error('Error creating subscription:', error);
+    throw error;
+  }
+}

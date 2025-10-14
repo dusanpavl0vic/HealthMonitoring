@@ -1,14 +1,7 @@
 "use client";
 
-import { HealthRecord, ValidationResult } from "@/interfaces/healthData";
+import { AthleteData } from "@/interfaces/athleteData";
 import AthleteCard from "./AthleteCard/AthleteCard";
-
-interface AthleteData {
-  athleteId: string;
-  currentData: ValidationResult | null;
-  history: HealthRecord[];
-  lastUpdate: Date;
-}
 
 interface DashboardLayoutProps {
   athletesData: AthleteData[];
