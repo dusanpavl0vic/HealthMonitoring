@@ -1,4 +1,4 @@
-import { ValidationResult } from "@/app/interfaces/healthData";
+import { ValidationResult } from "@/interfaces/healthData";
 
 interface HealthAlertsProps {
   currentData: ValidationResult;

@@ -1,6 +1,6 @@
 "use client";
 
-import { HealthRecord, ValidationResult } from "@/app/interfaces/healthData";
+import { HealthRecord, ValidationResult } from "@/interfaces/healthData";
 import AthleteCard from "./AthleteCard/AthleteCard";
 
 interface AthleteData {

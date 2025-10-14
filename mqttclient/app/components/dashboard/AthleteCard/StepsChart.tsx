@@ -1,4 +1,4 @@
-import { HealthRecord } from "@/app/interfaces/healthData";
+import { HealthRecord } from "@/interfaces/healthData";
 import {
   CartesianGrid,
   Line,

@@ -1,4 +1,4 @@
-import { HealthRecord, ValidationResult } from "@/app/interfaces/healthData";
+import { HealthRecord, ValidationResult } from "@/interfaces/healthData";
 import MiniLocationMap from "../MiniLocationMap";
 import AthleteFooter from "./AthleteFooter";
 import AthleteHeader from "./AthleteHeader";

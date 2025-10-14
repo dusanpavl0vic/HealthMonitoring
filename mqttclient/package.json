@@ -6,7 +6,8 @@
     "dev": "npx next dev --turbopack -p 4000",
     "build": "npx next build",
     "start": "npx next start -p 4000",
-    "data-service": "ts-node servers/dataService.ts"
+    "server": "tsx servers/index.ts",
+    "dev:all": "concurrently \"npm run server\" \"npm run dev\""
   },
   "dependencies": {
     "mqtt": "^5.14.1",
@@ -25,8 +26,10 @@
     "@types/node": "^20.19.19",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }
