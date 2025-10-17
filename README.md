@@ -1,3 +1,3 @@
-# 🩺 HealthMonitoring
+# HealthMonitoring
 
 ![HealthMonitoring Logo](./images/HealthMonitoring.png)
